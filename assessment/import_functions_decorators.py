@@ -3,7 +3,7 @@
 def read_balance(balance_file):
     try:
         with open(balance_file, "r") as file:
-            return float(file.read())# Read the content of the file and convert it to float
+            return float(file.read()) # Read the content of the file and convert it to float
     # Handle FileNotFoundError by returning 0
     except FileNotFoundError:
         return 0
@@ -39,7 +39,7 @@ def read_inventory(inventory_file):
                     # Print an error message for JSON decoding errors
                     print(f"Error decoding line '{line.strip()}': {e}")
     except FileNotFoundError:
-        print("Inventory file not found.")
+        print("\nInventory file not found. but no worries it will be created for you :)")
     except Exception as e:
         print(f"Error reading inventory data: {e}")
     return warehouse_list

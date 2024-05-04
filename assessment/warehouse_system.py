@@ -194,13 +194,8 @@ def main_menu():
     print("6. warehouse")
     print("7. review")
     print("8. end")
-    action = input("\nEnter your choice (1, 2, 3, 4, 5, 6, 7, 8): ")
+    action = input("Enter your choice (1, 2, 3, 4, 5, 6, 7, 8): ")
     return action
-
-# operations_recorded.append({
-# "type": "choosing action",
-# "action": action,
-# "timestamp": datetime.datetime.now()})
 
 while True:
     action = main_menu()

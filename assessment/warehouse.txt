@@ -1,0 +1,3 @@
+{"name": "coke", "price": 1, "quantity": 1}
+{"name": "fanta", "price": 1, "quantity": 100}
+{"name": "pepsi", "price": 1, "quantity": 20}
