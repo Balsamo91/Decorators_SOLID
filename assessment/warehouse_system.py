@@ -1,6 +1,7 @@
 # Importing datatime module to keep track of event times for when the user do operations
 import datetime
 import sys
+from import_functions_decorators import history, read_balance, write_balance, read_inventory, write_inventory
 
 class Manager:
     def __init__(self):
@@ -21,10 +22,12 @@ class Manager:
 account_warehouse_system = Manager()
 
 # Setting up the global variable and empty list 
-account = 0
-warehouse_list = []
+balance_file = "balance.txt"
+inventory = "warehouse.txt"
+history_file = "history.txt"
+account = read_balance(balance_file)
+warehouse_list = read_inventory(inventory)
 operations_recorded = [] # In here I am recording every single oparation done by the user
-
 
 @account_warehouse_system.assign("balance")
 def balance(account_warehouse_system):
@@ -42,6 +45,8 @@ def balance(account_warehouse_system):
                 "type": "balance action",
                 "account": balance,
                 "timestamp": datetime.datetime.now()})
+            write_balance(balance_file, account)
+            history(operations_recorded, history_file)
             break
         # checking if the user subtract more than the ammount available
         elif account <= 0 and balance <= 0:
@@ -69,9 +74,11 @@ def purchase(account_warehouse_system):
             if p["name"] == name:
                 p["quantity"] += quantity
                 item_exist = True
+                write_inventory(inventory, warehouse_list)
                 break
         if not item_exist:
             warehouse_list.append({"name" : name, "price" : price, "quantity" : quantity})
+            write_inventory(inventory, warehouse_list)
         account -= price * quantity # substract the purchased items from the account
         print(f"\nPurchase has been successful! {quantity} unit(s) of {name} bought for a total of {price * quantity}.")
         operations_recorded.append({
@@ -80,6 +87,7 @@ def purchase(account_warehouse_system):
         "price": price,
         "quantity": quantity,
         "timestamp": datetime.datetime.now()})
+        history(operations_recorded, history_file)
     else:
         print("\nNot enough fund, Bruh!!!!")
         return
@@ -109,6 +117,8 @@ def sale(account_warehouse_system):
             "price": price,
             "quantity": quantity,
             "timestamp": datetime.datetime.now()})
+            history(operations_recorded, history_file)
+            write_inventory(inventory, warehouse_list)
             break
     else:
         print("\nProduct not found or insufficient quantity in the warehouse, Bruh!!!")
@@ -120,6 +130,7 @@ def amount(account_warehouse_system):
     operations_recorded.append({
     "type": "account action",
     "timestamp": datetime.datetime.now()})
+    history(operations_recorded, history_file)
 
 @account_warehouse_system.assign("list")
 def list(account_warehouse_system):
@@ -131,6 +142,7 @@ def list(account_warehouse_system):
             operations_recorded.append({
             "type": "list action",
             "timestamp": datetime.datetime.now()})
+        history(operations_recorded, history_file)
 
 @account_warehouse_system.assign("warehouse")
 def warehouse(account_warehouse_system):
@@ -141,6 +153,7 @@ def warehouse(account_warehouse_system):
             operations_recorded.append({
             "type": "list action",
             "timestamp": datetime.datetime.now()})
+            history(operations_recorded, history_file)
             break
         else:
             print("\nProduct is not in the system, Bruh!!!")
@@ -180,6 +193,8 @@ def review(account_warehouse_system):
 @account_warehouse_system.assign("end")
 def end_program(account_warehouse_system):
     print("\nEnding program!\n")
+    write_balance(balance_file, account)
+    history(operations_recorded, history_file)
     sys.exit(0)
 
 
@@ -194,8 +209,13 @@ def main_menu():
     print("6. warehouse")
     print("7. review")
     print("8. end")
-    action = input("Enter your choice (1, 2, 3, 4, 5, 6, 7, 8): ")
+    action = input("\nEnter your choice (1, 2, 3, 4, 5, 6, 7, 8): ")
     return action
+
+# operations_recorded.append({
+# "type": "choosing action",
+# "action": action,
+# "timestamp": datetime.datetime.now()})
 
 while True:
     action = main_menu()
